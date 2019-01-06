@@ -11,7 +11,6 @@ module.exports = content => {
       ]
     });
   } catch(err) {
-    console.log(err)
     ast = parser.parse(content, { 
       sourceType: 'script', 
       plugins: [
