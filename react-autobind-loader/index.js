@@ -1,39 +1,21 @@
-const parser = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
-const t = require('@babel/types');
+const genAst = require('./lib/genAst.js');
+const getInsertList = require('./lib/getInsertList.js');
 
 module.exports = content => {
-  let ast;
-  try {
-    ast = parser.parse(content, { 
-      sourceType: 'module', 
-      plugins: [
-        "jsx"
-      ]
-    });
-  } catch(err) {
-    ast = parser.parse(content, { 
-      sourceType: 'script', 
-      plugins: [
-        "jsx"
-      ]
-    });
-  }
+  const ast = genAst(content);
+  const insertList = getInsertList(ast);
+  return process(insertList, content)
+} 
 
-
-  traverse(ast, {
-    enter(path) {
-      if(t.isClassDeclaration(path.node)) {
-        content = process(path.node, content);
-      }
-    }
-  })
-  console.log(content);
-  return content; 
-}
-
-function process(node, content) {
-  const left = content.slice(0, 341);
-  const right = content.slice(341);
-  return left + ';\nthis.test = this.test.bind(this);' + right;
+function process(insertList, content) {
+  let insertLen = 0;
+  let result = content;
+  insertList.forEach(i => {
+    const idx = i.insertPos + insertLen;
+    const l = result.slice(0, idx);
+    const r = result.slice(idx);
+    result = l + i.code + r;
+    insertLen += i.code.length;
+  });
+  return result;
 }

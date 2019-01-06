@@ -1,33 +1,41 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-const { format } = require('./util');
 
 
-format();
-console.log('hello world');
+class A extends React.Component {
 
-function test() {
-  return class extends Component {
-    render(){
-      return <p></p>
-    }
+  state = {
+    name: 'zyl'
+  }
+
+  test() {
+    console.log(this.state.name);
+  }
+  render() {
+    return <p onClick={this.test}>aaa</p>
   }
 }
-test()
 
-class App extends React.Component {
+class B extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: 'hello world'
+      msg: 'bbbbb'
     }
   }
 
   test() {
-    console.log(this.state.text)
+    console.log(this.state.msg);
   }
+
   render() {
-    return <p onClick={this.test}>{ this.state.text }</p>
+    return <p onClick={this.test}>bbb</p>
+  }
+}
+
+class App extends Component {
+  render() {
+    return <div><A /><B /></div>
   }
 }
 
